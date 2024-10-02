@@ -58,6 +58,11 @@ if(WASM_ONLY)
   set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-s WASM=1 -s EXPORTED_FUNCTIONS='[_never]' -s EXTRA_EXPORTED_RUNTIME_METHODS='[ccall, cwrap]'")
 endif(WASM_ONLY)
 
+if(NO_FFI)
+  message(STATUS "Setting compilation to leave out ffi")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNO_FFI")
+endif(NO_FFI)
+
 if(JS_ONLY)
   message(STATUS "Setting compilation target to native JavaScript")
   set(CMAKE_EXECUTABLE_SUFFIX ".js")
