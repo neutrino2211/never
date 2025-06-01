@@ -2,11 +2,18 @@ cmake_minimum_required(VERSION 3.0.2)
 project(never)
 enable_language(C)
 
+# Explicitly disable UBSan or Clang default sanitizer instrumentation
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-sanitize=undefined -fno-sanitize=integer")
+
 find_package(BISON 2.7.1)
 find_package(FLEX)
 BISON_TARGET(parser ${CMAKE_CURRENT_SOURCE_DIR}/front/parser.y ${CMAKE_CURRENT_SOURCE_DIR}/front/parser.c VERBOSE parser.txt)
 FLEX_TARGET(scanner ${CMAKE_CURRENT_SOURCE_DIR}/front/scanner.l  ${CMAKE_CURRENT_SOURCE_DIR}/front/scanner.c)
 ADD_FLEX_BISON_DEPENDENCY(scanner parser)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  set(MACOSX TRUE)
+endif()
 
 if (MSVC)
   # Statically links against the standard library
@@ -27,6 +34,10 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ftest-coverage")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
   endif(ENABLE_COVERAGE)
+endif ()
+
+if (MACOSX)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -L/opt/homebrew/opt/libffi/lib -I/opt/homebrew/opt/libffi/include")
 endif ()
 
 file(GLOB SRC
