@@ -63,6 +63,11 @@ if(NO_FFI)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNO_FFI")
 endif(NO_FFI)
 
+if(HOST_ONLY_FFI)
+  message(STATUS "Setting compilation to use host only ffi")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DHOST_ONLY_FFI")
+endif(HOST_ONLY_FFI)
+
 if(JS_ONLY)
   message(STATUS "Setting compilation target to native JavaScript")
   set(CMAKE_EXECUTABLE_SUFFIX ".js")

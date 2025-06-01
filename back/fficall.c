@@ -149,7 +149,12 @@ void * ffi_decl_get_handle(const char * libname)
         libname = NULL;
     }
 
+#ifdef HOST_ONLY_FFI
+    assert(libname == NULL); // Make sure we don't open a library if we're using host only ffi
+#endif
+
     handle = dlopen(libname, RTLD_LAZY);
+
     if (handle == NULL)
     {
         fprintf(stderr, "cannot open library %s\n", libname);
